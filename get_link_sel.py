@@ -15,19 +15,20 @@ class Serial():
     def __init__(self):
         pass
 
-    def data__serial(count_sezons:int, web_element):
+    def data_serial(count_sezons:int, web_element):
         """Сбор и упорядочивание информации
         Вход count_sezons:int - кол-восезонов, web_element - веб элемент Селениум.
         Результат:
         Получаем множество: словарь с количеством переводов в сезоне и ссылками на скаивание
         и словарь с именами переводов(если в сезоне болеее одно перевода, по какой то причине
         не получается вытащить текст из локатора, пока решено "костылём")
+        дополнительно возвращием тип контена - сериал
         """
         count_sezons = count_sezons
         web_element = web_element
-
+        content_type = 'сериал'
         count_tanslater_dict = {}
-        name_translater = {}
+
         # Получаем словарь счётчик,  где ключ это №сезона, значение кол-во переводов
         for c in range(1, count_sezons + 1):
             count_tanslater_dict[f'{c} Сезон'] = len(web_element[1].find_elements(By.XPATH, f'//div[@id="down"]'
@@ -86,8 +87,38 @@ class Serial():
                 f'[{count}]//div[@class="in_s"]/div[@class="mfs"]').text].append(tag_a_all)
 
             count += 1  # Счетчик для смены сезонов в локторах
+        return sezons, name_translater, content_type
 
-        return sezons, name_translater
+    def data_film(translater_count:int, web_element,search_names):  # Цельнометалл
+        """Сбор и упорядочивание информации
+                Вход translater_count:int - кол-переводов, web_element - веб элемент Селениум.
+                Результат:
+                Получаем множество: словарь с количеством переводов в сезоне и ссылками на скаивание
+                и словарь с именами переводов
+                дополнительно возвращием тип контена - фильм
+                """
+        translater_count = translater_count
+        web_element = web_element
+        content_type = 'фильм'
+        translater_film = {}
+        film_name=search_names
+        # Модуль collections Для создания ключей и списков в значениях словаря
+        film_link = defaultdict(lambda: defaultdict(list))
+        # Получаем переводы фильмов
+        find_translater_film_html = web_element.find_elements(By.XPATH, f'//div[@class="in_tr"]')
+        # Цикл сбора ссылок в словарь
+        for i in range(1,translater_count+1):
+            # Получчаем веб-элемент с сылками отдельно для каждого первода
+            tag_a_html = web_element.find_elements(By.XPATH, f'//div[@class="dbord"][{i}]/div[@class="down"]/a')
+            # Собираем словарь с переводами
+            translater_film[i]=find_translater_film_html[i-1].text.replace("\n", " ")
+            # Цилк по веб элементам с ссылками, достаем  знамение аттрибута href
+            for a in tag_a_html:
+                # Проблема с добавлением отдельного списка ссылок по качеству в  отдеельный ключ,
+                # пока решено с помощью Модуль collections
+                film_link[film_name][i].append(a.get_attribute('href'))
+
+        return film_link, translater_film, content_type
 
     def get_link(url=''):
         """Сбор данных(ссылки на видео, названия) с сайта, с помощью селениум веб-драйвер:
@@ -105,7 +136,7 @@ class Serial():
 
         try:
             # Поиск локатора "поисковой строки"
-            search_html = WebDriverWait(driver, 10).until(
+            search_html = WebDriverWait(driver, 7).until(
                 EC.presence_of_element_located((By.XPATH, '//input')))
         except TimeoutException:
             print('Поисковая строка не найдена')
@@ -115,11 +146,11 @@ class Serial():
         while True:
             try:
                 search_html.send_keys(str(input('Введите название сериала/фильма:')))
-                search_names_html = WebDriverWait(driver, 10).until((
+                search_names_html = WebDriverWait(driver, 5).until((
                     EC.presence_of_all_elements_located((By.XPATH, '//li[@class="select2-results__option"]'))
                 ))
             except TimeoutException:
-                print("По зпросу ничего не найдено:")
+                print("По запросу ничего не найдено:")
                 search_html.clear()
             else:
                 break
@@ -132,10 +163,17 @@ class Serial():
         try:
             # Выбор контента путем ввода его номера на экране
             # Требуется добавить исключения  для отлова некорректного ввода
-            get_count = int(input('Введите номер фильма/сериала:'))
+            while True:
+                try:
+                    get_count = int(input('Введите номер фильма/сериала:'))
+                except ValueError as er:
+                    print("Не верный ввод, требуетсяввести номерсериала/фильма цифрами")
+                else:
+                    break
         except TimeoutException:
             print('Не верный ввод')
         else:
+            search_names = search_names_html[get_count-1].text
             search_names_html[get_count-1].click()  # Клик по выбранному контенту
             time.sleep(1)
             url_film = driver.current_url  # Получаем ссылку контента
@@ -157,19 +195,30 @@ class Serial():
                 EC.presence_of_element_located((By.XPATH,'//h1[@class="fll"]'))
             )
             if 'сериал' in html_name.text:
-                print('собираю данные, приблизительное время ожидания 30 секунд')
+                print('собираю данные по сериалу, приблизительное время ожидания 30 секунд')
                 # Кол-во сезонов
                 sezons_count_html = WebDriverWait(driver, 10).until(
                     EC.presence_of_all_elements_located((By.XPATH, '//div[@id="down"]/div[@class="dspoiler"]')))
                 sezons_count = len(sezons_count_html)
 
                 # Результат работы функции по сбору и упорядочиванию информации
-                data = Serial.data__serial(sezons_count, sezons_count_html)
-
+                data = Serial.data_serial(sezons_count, sezons_count_html)
 
                 time.sleep(1)
             else:
-                print('Локаторы фильмов покаа не реализованны')
+                print('собираю данные по фильму, приблизительное время ожидания 30 секунд')
+                film_html = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//div[@id="down"]')))
+                film_count_html = WebDriverWait(driver, 10).until(
+                    EC.presence_of_all_elements_located((By.XPATH, '//div[@id="down"]/div[@class="dbord"]'))
+                )
+                translater_count = len(film_count_html)
+
+                # Результат работы функции по сбору и упорядочиванию информации
+                data = Serial.data_film(translater_count, film_html, search_names)
+
+
+
         except TimeoutException:
             print("время ожидания локатора скачать вышло")
             driver.close()
@@ -188,3 +237,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+#Цельнометаллическая оболочка
+#http://zagonka20.zagonko.com/17643-1_celnometallicheskaja-obolochka-1987-onlayn.html

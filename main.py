@@ -2,7 +2,7 @@ import requests
 import json
 import datetime
 import time
-from download_video import downloads
+from download_video import downloads_serial, downloads_film
 from get_link_sel import Serial
 
 
@@ -19,8 +19,11 @@ def data_print_serial(data_link: dict, data_translater: dict):
     traslater_list_one = []
     count_series = []
     serial_link = data_link
-
     serial_tanslater = data_translater
+    #with open('dick_serial.json', 'w', encoding='utf8') as file:
+    #    json.dump(serial_link, file, ensure_ascii=False, indent=4)
+    #with open('dick_translater.json', 'w', encoding='utf8') as file:
+    #    json.dump(serial_tanslater, file, ensure_ascii=False, indent=4)
     print(f'Количество сезонов:')
     for key_1 in serial_link:
         if len(serial_tanslater[int(key_1[0])]) > 3:
@@ -47,6 +50,7 @@ def data_print_serial(data_link: dict, data_translater: dict):
             count_tanslater.pop(i)
         else:
             print(f'{i+1}:{count_tanslater[i]}')
+    #print(count_tanslater)
     while True:
         try:
             input_tanslater = int(input('Введите номер перевода'))
@@ -81,14 +85,55 @@ def data_print_serial(data_link: dict, data_translater: dict):
     print(f'скачать серии с {input_count_series_in} по {input_count_series_out}')
     count_series.append(input_count_series_in)
     count_series.append(input_count_series_out)
+    if len(count_tanslater) > 1:
+        return serial_link[f'{input_sezon} Сезон'][input_tanslater], input_video_resolution , count_series
+    else:
+        return serial_link[f'{input_sezon} Сезон'][serial_tanslater[input_sezon]], input_video_resolution , count_series
 
-    return serial_link[f'{input_sezon} Сезон'][input_tanslater], input_video_resolution , count_series
+
+def data_print_film(data_link: dict, data_translater: dict):
+
+    film_link = data_link
+    film_tanslater = data_translater
+    print('Доступные переводы:')
+    count = 1
+    film_name = ''
+    for key_1 in film_tanslater:
+        print(f'{key_1}: {film_tanslater[key_1]}')
+        count += 1
+
+    # Получим название фильма из ключа, что бы передать его в функцию скачивания, для имени файла
+    for key_1 in film_link:
+        film_name = key_1
+    while True:
+        try:
+            input_translater = int(input('Введите номер перевода'))
+        except ValueError as error:
+            print("Не верный ввод!!!!!\nВедите тоько цифры соответствующие номеру перевода")
+        else:
+            break
+    print('Выберете разрешение(качество) видео\n1: 240p\n2: 360p\n3: 480p')
+    while True:
+        try:
+            input_video_resolution = int(input('Введите номер разрешения'))
+        except ValueError as error:
+            print("Не верный ввод!!!!!\nВедите тоько цифры соответствующие номеру разрешения")
+        else:
+            break
+
+    return film_link[film_name][input_translater], input_video_resolution, film_name
 
 
 def main():
     get_link = Serial.get_link('http://zagonka1.zagonkov.gb.net/')
-    print_sort = data_print_serial(get_link[0], get_link[1])
-    download_files = downloads(print_sort[0], print_sort[1], print_sort[2])
+    if get_link[2] == 'сериал':
+        print_sort = data_print_serial(get_link[0], get_link[1])
+        download_serials = downloads_serial(print_sort[0], print_sort[1], print_sort[2])
+    elif get_link[2] == 'фильм':
+        print_sort = data_print_film(get_link[0], get_link[1])
+        print(len(print_sort[0]))
+        print(print_sort[2])
+        download_films = downloads_film(print_sort[0], print_sort[1], print_sort[2])
 
 
 if __name__ == '__main__':
