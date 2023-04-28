@@ -2,9 +2,14 @@ import requests
 import json
 import datetime
 import time
+import concurrent.futures
+from concurrent.futures import as_completed
+from tqdm import tqdm
+import os
 
 
 def downloads_serial(url_list, video_resolution, count_series):
+    """Последовательное скачивание файлов(сериалы)"""
     count_in = 1
     count_out = count_series[1]
     print(f'Скачивание началось!!!!!!!\nВсего для скачивания {count_out} видео\n============')
@@ -26,7 +31,8 @@ def downloads_serial(url_list, video_resolution, count_series):
         return 'Upps Eror'
 
 
-def downloads_film(url_list, video_resolution, film_name): #url_list, video_resolution, film_name
+def downloads_film(url_list, video_resolution, film_name):
+    """Последовательное скачивание файлов(фильмы)"""
     url_list = url_list
     print(url_list[video_resolution-1])
     video_resolution = video_resolution
@@ -48,11 +54,10 @@ def downloads_film(url_list, video_resolution, film_name): #url_list, video_reso
         return 'Video download'
     except Exception as ex:
         return 'Upps Eror'
-url_list=['http://video.zagonka.org/movies/658d89cdf4de5d6565b4044d2be0fed6ce37f025/17ced60a16e421881c72497a3f191ceb:2023041705/240.mp4', 'http://video.zagonka.org/movies/658d89cdf4de5d6565b4044d2be0fed6ce37f025/17ced60a16e421881c72497a3f191ceb:2023041705/360.mp4', 'http://video.zagonka.org/movies/658d89cdf4de5d6565b4044d2be0fed6ce37f025/17ced60a16e421881c72497a3f191ceb:2023041705/480.mp4']
-film_name = '1'
-video_resolution=1
+
+
 def main():
-    downloads_film(url_list,video_resolution,film_name)#,video_resolution,film_name
+    pass
 
 
 if __name__ == '__main__':

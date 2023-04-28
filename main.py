@@ -3,6 +3,7 @@ import json
 import datetime
 import time
 from download_video import downloads_serial, downloads_film
+from download_video_async import executor_download_serial
 from get_link_sel import Serial
 
 
@@ -20,10 +21,6 @@ def data_print_serial(data_link: dict, data_translater: dict):
     count_series = []
     serial_link = data_link
     serial_tanslater = data_translater
-    #with open('dick_serial.json', 'w', encoding='utf8') as file:
-    #    json.dump(serial_link, file, ensure_ascii=False, indent=4)
-    #with open('dick_translater.json', 'w', encoding='utf8') as file:
-    #    json.dump(serial_tanslater, file, ensure_ascii=False, indent=4)
     print(f'Количество сезонов:')
     for key_1 in serial_link:
         if len(serial_tanslater[int(key_1[0])]) > 3:
@@ -50,7 +47,6 @@ def data_print_serial(data_link: dict, data_translater: dict):
             count_tanslater.pop(i)
         else:
             print(f'{i+1}:{count_tanslater[i]}')
-    #print(count_tanslater)
     while True:
         try:
             input_tanslater = int(input('Введите номер перевода'))
@@ -86,13 +82,14 @@ def data_print_serial(data_link: dict, data_translater: dict):
     count_series.append(input_count_series_in)
     count_series.append(input_count_series_out)
     if len(count_tanslater) > 1:
-        return serial_link[f'{input_sezon} Сезон'][input_tanslater], input_video_resolution , count_series
+        return serial_link[f'{input_sezon} Сезон'][input_tanslater], input_video_resolution, count_series
     else:
-        return serial_link[f'{input_sezon} Сезон'][serial_tanslater[input_sezon]], input_video_resolution , count_series
+        return serial_link[f'{input_sezon} Сезон'][serial_tanslater[input_sezon]], input_video_resolution, count_series
 
 
 def data_print_film(data_link: dict, data_translater: dict):
-
+    """Сбор данных от пользователя в консоли, для последующей отправки в  функцию скачивания(фильмы)
+    подробнее пока в функции data_print_serial()"""
     film_link = data_link
     film_tanslater = data_translater
     print('Доступные переводы:')
@@ -128,7 +125,9 @@ def main():
     get_link = Serial.get_link('http://zagonka1.zagonkov.gb.net/')
     if get_link[2] == 'сериал':
         print_sort = data_print_serial(get_link[0], get_link[1])
-        download_serials = downloads_serial(print_sort[0], print_sort[1], print_sort[2])
+        #download_serials = downloads_serial(print_sort[0], print_sort[1], print_sort[2])
+        download_serials = executor_download_serial(print_sort[0], print_sort[1], print_sort[2])
+
     elif get_link[2] == 'фильм':
         print_sort = data_print_film(get_link[0], get_link[1])
         print(len(print_sort[0]))
