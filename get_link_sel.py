@@ -12,8 +12,10 @@ from collections import defaultdict
 
 
 class Serial():
+
     def __init__(self):
         pass
+
 
     def data_serial(count_sezons:int, web_element):
         """Сбор и упорядочивание информации
@@ -42,7 +44,7 @@ class Serial():
         for key in count_tanslater_dict:
             #  Если в сезоне переводов более одного
             if count_tanslater_dict[key] > 1:
-                #  Получччаем Данные попереводам в сезоне(покаа будут отдельным словарем)
+                #  Получчаем Данные попереводам в сезоне(покаа будут отдельным словарем)
                 find_tanslaters_sezon = web_element[1].find_element(By.XPATH, f'//div[@id="down"]'
                 f'/div[@class="dspoiler"][{count}]/div[@class="dtitle"]/div[@class="in_s"]/div[@class="mfs"]')
                 name_translater[count]=find_tanslaters_sezon.text # .replace("(", "").split(")")
@@ -232,7 +234,7 @@ class Serial():
 
 
 def main():
-    print(Serial.get_link('http://zagonka1.zagonkov.gb.net/'))
+    print(Serial.get_link())
 
 
 if __name__ == '__main__':

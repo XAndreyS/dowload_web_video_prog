@@ -1,11 +1,6 @@
 import requests
 import json
 import datetime
-import time
-import concurrent.futures
-from concurrent.futures import as_completed
-from tqdm import tqdm
-import os
 
 
 def downloads_serial(url_list, video_resolution, count_series):
@@ -17,7 +12,7 @@ def downloads_serial(url_list, video_resolution, count_series):
         for count_url in range(count_series[0], count_series[1]+1):
             t_new = datetime.datetime.now()
             print(f'Скачивается {count_in} видео файл')
-            response = requests.get(url=url_list[0][video_resolution-1][count_url-1],stream=True)
+            response = requests.get(url=url_list[0][video_resolution-1][count_url-1], stream=True)
             with open(f'{count_url}_seria.mp4', 'wb') as file:
                 for chunk in response.iter_content(chunk_size=1024 * 1024):
                     if chunk:
