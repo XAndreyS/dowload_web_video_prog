@@ -9,9 +9,9 @@ from user_terminal_soup import run_user_terminal
 
 
 def main():
+    t_new = datetime.datetime.now()
     print('Достуные сайты для скачивания видео:')
-    print('1) Загонка')
-    print('2) другое')
+    print('1: Загонка\n2: другое')
     while True:
         try:
             user_input_service = int(input('Введите номер сайта: '))
@@ -32,7 +32,7 @@ def main():
             else:
                 break
         downloads_content(user_input_url)
-
+    print(f'Время скачивания файлов:{datetime.datetime.now() - t_new}')
 
 if __name__ == '__main__':
 

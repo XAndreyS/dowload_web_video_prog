@@ -56,7 +56,6 @@ def downloads_serial_soup(url_list, video_resolution, count_series):
 def downloads_film(url_list, video_resolution, film_name):
     """Последовательное скачивание файлов(фильмы)"""
     url_list = url_list
-    print(url_list[video_resolution-1])
     video_resolution = video_resolution
     film_name = film_name.split("(")[0]
     count = 0
@@ -68,8 +67,29 @@ def downloads_film(url_list, video_resolution, film_name):
         with open(f'{film_name}.mp4', 'wb') as file:
             for chunk in response.iter_content(chunk_size=1024 * 1024):
                 if chunk:
-                    print(count)
-                    count+=1
+                    file.write(chunk)
+        print(f'Время скачивания файла:{datetime.datetime.now() - t_new}')
+
+        return 'Video download'
+    except Exception as ex:
+        return 'Upps Eror'
+
+
+def downloads_film_soup(url_list, video_resolution, film_name):
+    """Последовательное скачивание файлов(фильмы)"""
+    url_list = url_list
+    https = 'https:'
+    video_resolution = video_resolution
+    film_name = film_name.split("(")[0]
+    count = 0
+    print(f'Скачивание началось!!!!!!!\n============')
+    try:
+        t_new = datetime.datetime.now()
+        print(f'Скачивается видео файл\nПримерное время скачивания файла в разрешении 480p: 4 минуты')
+        response = requests.get(url=https+url_list[video_resolution-1],stream=True)
+        with open(f'{film_name}.mp4', 'wb') as file:
+            for chunk in response.iter_content(chunk_size=1024 * 1024):
+                if chunk:
                     file.write(chunk)
         print(f'Время скачивания файла:{datetime.datetime.now() - t_new}')
 

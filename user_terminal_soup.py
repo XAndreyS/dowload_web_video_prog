@@ -4,7 +4,7 @@ import time
 from collections import defaultdict
 import json
 from get_link_soup import ZagonkaSoup
-from download_video import downloads_serial_soup, downloads_film
+from download_video import downloads_serial_soup, downloads_film, downloads_film_soup
 from download_video_async import executor_download_serial_soup,executor_download_film
 
 
@@ -141,7 +141,7 @@ def data_print_film(data_film: tuple, name_film: str):
     print(f'Выбран фильм: {name_film}')
     print('Доступные переводы:')
 
-    count = 1#
+    count = 1
     for key in translater_dict:
         print(f'{key}: {translater_dict[key]}')
         count += 1
@@ -181,7 +181,7 @@ def run_user_terminal():
 
     print('Выберете способ скачивния:')
     print('1) Обычный')
-    print('2) Ассинхнонный - На данный момеент этот  сособ экспереементальный\nи может привеести к ошибкам')
+    print('2) Синхнонный - На данный момеент этот  способ эксперементальный\nи может привеести к ошибкам')
     while True:
         try:
             user_input_download = int(input('Введите номер способа загрузки видео: '))
@@ -195,7 +195,7 @@ def run_user_terminal():
         if 'сезон' in first_data_user[1]:
             downloads_serial_soup(data_serial[0], data_serial[1], data_serial[2])
         else:
-            downloads_film(data_film[0], data_film[1], data_film[2])
+            downloads_film_soup(data_film[0], data_film[1], data_film[2])
     else:
         if 'сезон' in first_data_user[1]:
             executor_download_serial_soup(data_serial[0], data_serial[1], data_serial[2])
