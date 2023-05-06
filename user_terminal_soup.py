@@ -4,8 +4,8 @@ import time
 from collections import defaultdict
 import json
 from get_link_soup import ZagonkaSoup
-from download_video import downloads_serial, downloads_film
-from download_video_async import executor_download_serial_soup
+from download_video import downloads_serial_soup, downloads_film
+from download_video_async import executor_download_serial_soup,executor_download_film
 
 
 def first_user_search():
@@ -13,7 +13,7 @@ def first_user_search():
     url_search = 'http://zagonko22.zagonko.com/engine/ajax/xsearch/f.php'
     while True:
         try:
-            user_search = input('Введите название фильма/сериала: ')
+            user_search = str(input('Введите название фильма/сериала: '))
             data_serch_list = ZagonkaSoup.searh_zagoka(url=url_search, search=user_search)
             if len(data_serch_list) == 0:
                 raise ValueError("По вашему запросу ничего не найдено, повторите запрос")
@@ -105,7 +105,7 @@ def data_print_serial(data_serial: tuple, name_serial: str):
 
     while True:
         try:
-            input_count_series_in = int(input('Ведите номер серии для скачивания'))
+            input_count_series_in = int(input('Ведите номер серии для скачивания: '))
             if input_count_series_in <= 0 or input_count_series_in > 100:
                 raise ValueError("Введите число соответствующее номеру серии!!!")
         except ValueError as error:
@@ -117,7 +117,7 @@ def data_print_serial(data_serial: tuple, name_serial: str):
 
     while True:
         try:
-            input_count_series_out = int(input('Ведите номер серии для скачивания'))
+            input_count_series_out = int(input('Ведите номер серии для скачивания: '))
             if input_count_series_out <= 0 or input_count_series_out > 100 \
                     or input_count_series_out < input_count_series_in:
                 raise ValueError("Введите число соответствующее номеру серии,!!!")
@@ -133,16 +133,78 @@ def data_print_serial(data_serial: tuple, name_serial: str):
     return link_serial_dict[str(input_seson)][input_translater], input_video_resolution, count_series
 
 
-def main():
+def data_print_film(data_film: tuple, name_film: str):
+
+    link_film_dict = data_film[0]
+    translater_dict = data_film[1]
+    name_film = name_film.split('(')[0].strip()
+    print(f'Выбран фильм: {name_film}')
+    print('Доступные переводы:')
+
+    count = 1#
+    for key in translater_dict:
+        print(f'{key}: {translater_dict[key]}')
+        count += 1
+
+    while True:
+        try:
+            input_translater = int(input('Введите номер перевода/озвучки: '))
+            if input_translater <= 0 or input_translater > count:
+                raise ValueError("Введите число соответствующее номеру перевода/озвучки!!!")
+        except ValueError as error:
+            print(error)
+        else:
+            break
+
+    print('Выберете разрешение(качество) видео\n1: 240p\n2: 360p\n3: 480p')
+
+    while True:
+        try:
+            input_video_resolution = int(input('Введите номер разрешения: '))
+            if input_video_resolution <= 0 or input_video_resolution > 3:
+                raise ValueError("Введите число соответствующее номеру разрешения!!!")
+        except ValueError as error:
+            print(error)
+        else:
+            break
+
+    return link_film_dict[name_film][input_translater], input_video_resolution, name_film
+
+
+def run_user_terminal():
     first_data_user = first_user_search()
-    data_serial = data_print_serial(first_data_user[0], first_data_user[1])
-    #print(data_serial[0])
-    #print('++++++++')
-    #print(data_serial[1])
-    #print('++++++++')
-    #print(data_serial[2])
+
     if 'сезон' in first_data_user[1]:
-        executor_download_serial_soup(data_serial[0], data_serial[1], data_serial[2])
+        data_serial = data_print_serial(first_data_user[0], first_data_user[1])
+    else:
+        data_film = data_print_film(first_data_user[0], first_data_user[1])
+
+    print('Выберете способ скачивния:')
+    print('1) Обычный')
+    print('2) Ассинхнонный - На данный момеент этот  сособ экспереементальный\nи может привеести к ошибкам')
+    while True:
+        try:
+            user_input_download = int(input('Введите номер способа загрузки видео: '))
+            if user_input_download < 0 or user_input_download > 3:
+                raise ValueError("Введите число соответствующее номеру сервиса!!!")
+        except ValueError as error:
+            print(error)
+        else:
+            break
+    if user_input_download == 1:
+        if 'сезон' in first_data_user[1]:
+            downloads_serial_soup(data_serial[0], data_serial[1], data_serial[2])
+        else:
+            downloads_film(data_film[0], data_film[1], data_film[2])
+    else:
+        if 'сезон' in first_data_user[1]:
+            executor_download_serial_soup(data_serial[0], data_serial[1], data_serial[2])
+        else:
+            executor_download_film(data_film[0], data_film[1], data_film[2])
+
+
+def main():
+    pass
 
 #СамоИрония судьбы
 #Виват, гардемарины!
@@ -151,3 +213,6 @@ def main():
 if __name__ == '__main__':
 
     main()
+
+
+# https://www.tiktok.com/@genarochambi600/video/7229480740478586117?is_from_webapp=1&sender_device=pc

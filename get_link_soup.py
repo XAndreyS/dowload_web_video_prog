@@ -190,7 +190,7 @@ class ZagonkaSoup():
         # Модуль collections Для создания ключей и списков в значениях словаря
         film_link = defaultdict(lambda: defaultdict(list))
         translater_dict = {}
-        name_film = name_film.split('(')[0]
+        name_film = name_film.split('(')[0].strip()
         soup = BeautifulSoup(res_html, 'lxml')
         soup_prettify_ = soup.prettify()
         soup_find = BeautifulSoup(soup_prettify_, 'lxml')

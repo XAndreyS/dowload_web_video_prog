@@ -70,11 +70,13 @@ def executor_download_film(url_list: list, video_resolution: int, film_name: str
     def make_headers(start, chunk_size):
         end = start + chunk_size - 1
         return {'Range': f'bytes={start}-{end}'}
-
-    url_list = url_list
+    https = 'https:'
+    url_list_https = []
+    for u in url_list:
+        url_list_https.append(https+u)
     video_resolution = video_resolution
     film_name = film_name.split("(")[0]
-    url = url_list[video_resolution - 1]
+    url = url_list_https[video_resolution - 1]
     count = 0
     file_name = f'{film_name}.mp4'
     response = requests.get(url, stream=True)
@@ -124,18 +126,18 @@ def executor_download_serial_soup(url_list: list, video_resolution: int, count_s
         except Exception as ex:
             return 'Upps Eror'
 
-    for res in url_list_for_get:
-        response = requests.get(https+res, stream=True)
-        file_size = int(response.headers.get('content-length', 0))
-        response_list.append(file_size)
+    #for res in url_list_for_get:
+    #    response = requests.get(https+res, stream=True)
+    #    file_size = int(response.headers.get('content-length', 0))
+    #    response_list.append(file_size)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         jobs_all = [executor.submit(download, url_list_for_get[i], i+1) for i in range(len(url_list_for_get))]
 
-        #with tqdm(total=file_size,unit='iB', unit_scale=True, unit_divisor=1024 * 1024, leave=True, colour='cyan') as bar:  #total=file_size
+        #with tqdm(unit='iB', unit_scale=True, unit_divisor=1024 * 1024, leave=True, colour='cyan') as bar:  #total=file_size
         #    for job in as_completed(jobs_all):
         #        size = job.result()
-        #        print(f'SSSSSS+++++++++{size}')
+        #        print(size)
         #        bar.update(size)
 
 def main():
