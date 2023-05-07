@@ -5,7 +5,7 @@ import time
 from download_video import downloads_serial_soup, downloads_film, downloads_content
 from download_video_async import executor_download_film, executor_download_serial_soup
 from get_link_sel import Serial
-from user_terminal_soup import run_user_terminal
+from user_terminal_soup import run_user_terminal_soup
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
         else:
             break
     if user_input_service == 1:
-        run = run_user_terminal()
+        run = run_user_terminal_soup()
     else:
         while True:
             try:

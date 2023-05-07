@@ -5,7 +5,7 @@ from collections import defaultdict
 import json
 from get_link_soup import ZagonkaSoup
 from download_video import downloads_serial_soup, downloads_film, downloads_film_soup
-from download_video_async import executor_download_serial_soup,executor_download_film
+from download_video_async import executor_download_serial_soup,executor_download_film, executor2_download_serial_soup
 
 
 def first_user_search():
@@ -171,7 +171,7 @@ def data_print_film(data_film: tuple, name_film: str):
     return link_film_dict[name_film][input_translater], input_video_resolution, name_film
 
 
-def run_user_terminal():
+def run_user_terminal_soup():
     first_data_user = first_user_search()
 
     if 'сезон' in first_data_user[1]:
@@ -180,8 +180,8 @@ def run_user_terminal():
         data_film = data_print_film(first_data_user[0], first_data_user[1])
 
     print('Выберете способ скачивния:')
-    print('1) Обычный')
-    print('2) Синхнонный - На данный момеент этот  способ эксперементальный\nи может привеести к ошибкам')
+    print('1: Обычный')
+    print('2: Синхнонный(executor) - На данный момент этот  способ эксперементальный\nи может привеести к ошибкам')
     while True:
         try:
             user_input_download = int(input('Введите номер способа загрузки видео: '))
@@ -198,7 +198,8 @@ def run_user_terminal():
             downloads_film_soup(data_film[0], data_film[1], data_film[2])
     else:
         if 'сезон' in first_data_user[1]:
-            executor_download_serial_soup(data_serial[0], data_serial[1], data_serial[2])
+            executor2_download_serial_soup(data_serial[0], data_serial[1], data_serial[2])
+            #executor_download_serial_soup(data_serial[0], data_serial[1], data_serial[2])
         else:
             executor_download_film(data_film[0], data_film[1], data_film[2])
 

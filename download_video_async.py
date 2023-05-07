@@ -6,6 +6,7 @@ import concurrent.futures
 from concurrent.futures import as_completed
 from tqdm import tqdm
 import os
+import asyncio
 
 
 def executor_download_film(url_list: list, video_resolution: int, film_name: str):
@@ -21,7 +22,7 @@ def executor_download_film(url_list: list, video_resolution: int, film_name: str
 
         # Need size to make tqdm work.
         size = 0
-        with open(partfile, 'wb') as f:
+        with open(f'files/{partfile}', 'wb') as f:
             for chunk in response.iter_content(chunk_size):
                 if chunk:
                     size += f.write(chunk)
@@ -54,7 +55,7 @@ def executor_download_film(url_list: list, video_resolution: int, film_name: str
                 size = job.result()
                 bar.update(size)
 
-    with open(file_name, 'wb') as outfile:
+    with open(f'files/{file_name}', 'wb') as outfile:
         for i in range(len(chunks)):
             chunk_path = f'{file_name}.part{i}'
             with open(chunk_path, 'rb') as s:
@@ -78,7 +79,7 @@ def executor_download_serial_soup(url_list: list, video_resolution: int, count_s
         try:
             response = requests.get(url=url, stream=True)
             size = 0
-            with open(f'{count} Серия.mp4', 'wb') as file:
+            with open(f'files/{count} Серия.mp4', 'wb') as file:
                 for chunk in response.iter_content(chunk_size=1024 * 1024):
                     if chunk:
                         size += file.write(chunk)
@@ -93,6 +94,48 @@ def executor_download_serial_soup(url_list: list, video_resolution: int, count_s
             futures.append(executor.submit(download, url=url_list_for_get[i], count=i+1))
         for future in concurrent.futures.as_completed(futures):
             future.result()
+
+
+def executor2_download_serial_soup(url_list: list, video_resolution: int, count_series: list):
+    """Асинхнонное скачивание файлов(сериалы)"""
+    response_list = []
+    https = 'https:'
+    count_series = count_series
+    url_list_for_get = []
+    # Получаем список url серий,которые выбрал пользователь и передаём его в concurrent.futures.ThreadPoolExecutor
+    for count_url in range(count_series[0], count_series[1] + 1):
+        url_list_for_get.append(https + url_list[0][video_resolution - 1][count_url - 1])
+
+    def download(url, count, timeout=20, ):
+        """Функция скачивания"""
+        try:
+            response = requests.get(url=url, stream=True)
+            size = 0
+            with open(f'files/{count} Серия.mp4', 'wb') as file:
+                for chunk in response.iter_content(chunk_size=1024 * 1024):
+                    if chunk:
+                        size += file.write(chunk)
+            return size
+        except Exception as ex:
+            return 'Upps Eror'
+
+    for res_url in url_list_for_get:
+        response = requests.get(res_url, stream=True)
+        file_size = int(response.headers.get('content-length', 0))
+        response_list.append(file_size)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+        jobs = []
+
+        for i in range(len(url_list_for_get)):
+            jobs.append(executor.submit(download, url=url_list_for_get[i], count=i + 1))
+
+        with tqdm(total=file_size,unit='iB', unit_scale=True, unit_divisor=1024 * 1024, leave=True, colour='green') as bar:
+            # colour= 'cyan' #total=file_size
+
+            for job in concurrent.futures.as_completed(jobs):
+                size = job.result()
+                bar.update(size)
 
 
 def main():
