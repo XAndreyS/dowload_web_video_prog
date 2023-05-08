@@ -1,5 +1,3 @@
-#import Selenium
-
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
@@ -15,7 +13,6 @@ class Serial():
 
     def __init__(self):
         pass
-
 
     def data_serial(count_sezons:int, web_element):
         """Сбор и упорядочивание информации
@@ -135,7 +132,7 @@ class Serial():
         driver = webdriver.Chrome(executable_path='chromedriver.exe', options=options)
 
         driver.get(url)
-
+        search_names_html_all = []  # Список для сбора всех  результатов поиска
         try:
             # Поиск локатора "поисковой строки"
             search_html = WebDriverWait(driver, 7).until(
@@ -148,6 +145,9 @@ class Serial():
         while True:
             try:
                 search_html.send_keys(str(input('Введите название сериала/фильма:')))
+                search_names_html_first = WebDriverWait(driver, 5).until((
+                    EC.presence_of_element_located((By.XPATH, '//li[@class="select2-results__option select2-results__option--highlighted"]'))
+                ))
                 search_names_html = WebDriverWait(driver, 5).until((
                     EC.presence_of_all_elements_located((By.XPATH, '//li[@class="select2-results__option"]'))
                 ))
@@ -157,11 +157,14 @@ class Serial():
             else:
                 break
 
-        count_name = 1  # Счетчик для нумерации найденых видео
+        search_names_html_all.append(search_names_html_first)  # Добавляем первый элемент поиска
+        count_name = 2  # Счетчик для нумерации найденых видео
         print('По вашему запросу найдено')
+        print(f'1:{search_names_html_first.text}')
         for name in search_names_html:
             print(f'{count_name}:{name.text}')  # Результат на экран
             count_name += 1
+            search_names_html_all.append(name)  # Добавляем остальные элементы поиска
         try:
             # Выбор контента путем ввода его номера на экране
             # Требуется добавить исключения  для отлова некорректного ввода
@@ -175,8 +178,8 @@ class Serial():
         except TimeoutException:
             print('Не верный ввод')
         else:
-            search_names = search_names_html[get_count-1].text
-            search_names_html[get_count-1].click()  # Клик по выбранному контенту
+            search_names = search_names_html_all[get_count-1].text
+            search_names_html_all[get_count-1].click()  # Клик по выбранному контенту
             time.sleep(1)
             url_film = driver.current_url  # Получаем ссылку контента
         # Переход на страницу выбранного контента
@@ -219,8 +222,6 @@ class Serial():
                 # Результат работы функции по сбору и упорядочиванию информации
                 data = Serial.data_film(translater_count, film_html, search_names)
 
-
-
         except TimeoutException:
             print("время ожидания локатора скачать вышло")
             driver.close()
@@ -234,10 +235,8 @@ class Serial():
 
 
 def main():
-    print(Serial.get_link())
+    print(Serial.get_link('http://zagonko22.zagonko.com/9'))
 
 
 if __name__ == '__main__':
     main()
-#Цельнометаллическая оболочка
-#http://zagonka20.zagonko.com/17643-1_celnometallicheskaja-obolochka-1987-onlayn.html
