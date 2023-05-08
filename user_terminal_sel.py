@@ -36,6 +36,7 @@ def data_print_serial(data_link: dict, data_translater: dict):
     while True:
         try:
             input_sezon = int(input('Введите номер Сезона'))
+
         except ValueError as error:
             print("Не верный ввод!!!!!\nВедите тоько цифры соответствующие номеру сезона")
         else:

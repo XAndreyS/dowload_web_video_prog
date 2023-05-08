@@ -165,12 +165,15 @@ class Serial():
             print(f'{count_name}:{name.text}')  # Результат на экран
             count_name += 1
             search_names_html_all.append(name)  # Добавляем остальные элементы поиска
+        print(f'================{len(search_names_html_all)}')
         try:
             # Выбор контента путем ввода его номера на экране
             # Требуется добавить исключения  для отлова некорректного ввода
             while True:
                 try:
                     get_count = int(input('Введите номер фильма/сериала:'))
+                    if get_count <= 0 or get_count > len(search_names_html_all):
+                        raise ValueError("Введите число соответствующее номеру фильму/сериалу!!!")
                 except ValueError as er:
                     print("Не верный ввод, требуетсяввести номерсериала/фильма цифрами")
                 else:

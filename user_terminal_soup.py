@@ -185,7 +185,7 @@ def run_user_terminal_soup():
     while True:
         try:
             user_input_download = int(input('Введите номер способа загрузки видео: '))
-            if user_input_download < 0 or user_input_download > 3:
+            if user_input_download <= 0 or user_input_download > 3:
                 raise ValueError("Введите число соответствующее номеру сервиса!!!")
         except ValueError as error:
             print(error)
