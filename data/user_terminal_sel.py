@@ -2,9 +2,10 @@ import requests
 import json
 import datetime
 import time
-from download_video import downloads_serial, downloads_film
-from download_video_async import executor_download_serial
-from get_link_sel import Serial
+from ..load.download_video import downloads_serial_sel, downloads_film
+#from ..load.download_video_async import executor_download_serial
+from .get_link_sel import Serial
+from ..settings.settings import set_zagonka
 
 
 def data_print_serial(data_link: dict, data_translater: dict):
@@ -123,20 +124,23 @@ def data_print_film(data_link: dict, data_translater: dict):
     return film_link[film_name][input_translater], input_video_resolution, film_name
 
 
-def main():
+def run_user_terminal_selenium():
 
-    get_link = Serial('http://zagonka1.zagonkov.gb.net/').get_link()
-    print(get_link.url)
+    get_link = Serial.get_link(set_zagonka['zagonka_urls']['url'])
+
     if get_link[2] == 'сериал':
         print_sort = data_print_serial(get_link[0], get_link[1])
-        #download_serials = downloads_serial(print_sort[0], print_sort[1], print_sort[2])
-        download_serials = executor_download_serial(print_sort[0], print_sort[1], print_sort[2])
+        download_serials = downloads_serial_sel(print_sort[0], print_sort[1], print_sort[2])
 
     elif get_link[2] == 'фильм':
         print_sort = data_print_film(get_link[0], get_link[1])
         print(len(print_sort[0]))
         print(print_sort[2])
         download_films = downloads_film(print_sort[0], print_sort[1], print_sort[2])
+
+
+def main():
+    pass
 
 
 if __name__ == '__main__':

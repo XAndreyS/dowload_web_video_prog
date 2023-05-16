@@ -29,9 +29,13 @@ class Serial():
         count_tanslater_dict = {}
 
         # Получаем словарь счётчик,  где ключ это №сезона, значение кол-во переводов
-        for c in range(1, count_sezons + 1):
-            count_tanslater_dict[f'{c} Сезон'] = len(web_element[1].find_elements(By.XPATH, f'//div[@id="down"]'
-            f'/div[@class="dspoiler"][{c}]/div[@class="d_cont"]/div[@class="dspoiler"]'))
+        if count_sezons == 1:
+            count_tanslater_dict[f'{1} Сезон'] = len(web_element[0].find_elements(By.XPATH, f'//div[@id="down"]'
+            f'/div[@class="dspoiler"][{1}]/div[@class="d_cont"]/div[@class="dspoiler"]'))
+        else:
+            for c in range(1, count_sezons + 1):
+                count_tanslater_dict[f'{c} Сезон'] = len(web_element[0].find_elements(By.XPATH, f'//div[@id="down"]'
+                f'/div[@class="dspoiler"][{c}]/div[@class="d_cont"]/div[@class="dspoiler"]'))
 
         count = 1  # Общий сётчик
         # Модуль collections Для создания ключей и списков в значениях словаря
@@ -42,7 +46,7 @@ class Serial():
             #  Если в сезоне переводов более одного
             if count_tanslater_dict[key] > 1:
                 #  Получчаем Данные попереводам в сезоне(покаа будут отдельным словарем)
-                find_tanslaters_sezon = web_element[1].find_element(By.XPATH, f'//div[@id="down"]'
+                find_tanslaters_sezon = web_element[0].find_element(By.XPATH, f'//div[@id="down"]'
                 f'/div[@class="dspoiler"][{count}]/div[@class="dtitle"]/div[@class="in_s"]/div[@class="mfs"]')
                 name_translater[count]=find_tanslaters_sezon.text # .replace("(", "").split(")")
                 #  Цикл проходим по кол-ву переводов в сезоне
@@ -51,7 +55,7 @@ class Serial():
                     tag_a_360 = []
                     tag_a_480 = []
                     #  Получаем веб элементы со ссылками на видео
-                    tag_a_html = web_element[1].find_elements(By.XPATH, f'//div[@id="down"]/div[@class="dspoiler"]'
+                    tag_a_html = web_element[0].find_elements(By.XPATH, f'//div[@id="down"]/div[@class="dspoiler"]'
                     f'[{count}]/div[@class="d_cont"]/div[@class="dspoiler"][{i+1}]//a')
                     for a in tag_a_html:  # Цикл для упорядочивания видео по качеству
                         if a.get_attribute('href')[-7] == '2':
@@ -64,7 +68,7 @@ class Serial():
                     # Записываем в словарь номера сезонов, кол-во переводов и ссылки на видео для каждого
                     sezons[key][i+1].append(tag_a_all)
             else:  # Если в сезоне один первод
-                find_tanslater_sezon = web_element[1].find_element(By.XPATH, f'//div[@id="down"]'
+                find_tanslater_sezon = web_element[0].find_element(By.XPATH, f'//div[@id="down"]'
                 f'/div[@class="dspoiler"][{count}]/div[@class="dtitle"]/div[@class="in_s"]/div[@class="mfs"]')
                 name_translater[count] = find_tanslater_sezon.text  # .replace("(", "").split(")")
                 tag_a_240 = []

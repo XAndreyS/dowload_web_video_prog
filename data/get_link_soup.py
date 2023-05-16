@@ -3,7 +3,8 @@ from bs4 import BeautifulSoup
 import time
 from collections import defaultdict
 import json
-from ..settings.settings import zagonka_get_link_headers, zagonka, zagonka_searh_headers, zagonka_get_down_headers
+from ..settings.settings import set_zagonka
+
 
 class ZagonkaSoup():
     def __init__(self):
@@ -19,7 +20,7 @@ class ZagonkaSoup():
             '_ga_P1K99CP13B': 'GS1.1.1682775593.7.1.1682775597.0.0.0',
         }
 
-        headers = zagonka_searh_headers
+        headers = set_zagonka['zagonka_searh_headers']
 
         params = {
             'q': f'{search}',
@@ -50,7 +51,7 @@ class ZagonkaSoup():
             '_ga_P1K99CP13B': 'GS1.1.1682775593.7.1.1682775597.0.0.0',
         }
 
-        headers = zagonka_get_link_headers
+        headers = set_zagonka['zagonka_get_link_headers']
 
         response = requests.get(
             url=url+url_content,
@@ -78,7 +79,7 @@ class ZagonkaSoup():
             '_ga_X6M5R33EXW': 'GS1.1.1682775982.7.0.1682776016.0.0.0',
         }
 
-        headers = zagonka_get_down_headers
+        headers = set_zagonka['zagonka_get_down_headers']
 
         data = {
             'id': id,
@@ -86,7 +87,7 @@ class ZagonkaSoup():
         }
 
         response = requests.post(
-            zagonka['url_post'],
+            set_zagonka['zagonka_urls']['url_post'],
             cookies=cookies,
             headers=headers,
             data=data,

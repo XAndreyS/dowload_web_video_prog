@@ -6,12 +6,12 @@ import json
 from .get_link_soup import ZagonkaSoup
 from ..load.download_video import downloads_serial_soup, downloads_film, downloads_film_soup
 from ..load.download_video_async import executor_download_serial_soup,executor_download_film
-from ..settings.settings import zagonka
+from ..settings.settings import set_zagonka
 
 
 def first_user_search():
-    url_zagonka = zagonka['url']
-    url_search = zagonka['url_search']
+    url_zagonka = set_zagonka['zagonka_urls']['url']
+    url_search = set_zagonka['zagonka_urls']['url_search']
     while True:
         try:
             user_search = str(input('Введите название фильма/сериала: '))
