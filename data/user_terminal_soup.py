@@ -6,7 +6,7 @@ import json
 from .get_link_soup import ZagonkaSoup
 from ..load.download_video import downloads_serial_soup, downloads_film, downloads_film_soup
 from ..load.download_video_async import executor_download_serial_soup,executor_download_film
-from ..settings.settings import set_zagonka
+from ..settings.settings import set_zagonka, open_json_zset
 
 
 def first_user_search():
@@ -173,6 +173,7 @@ def data_print_film(data_film: tuple, name_film: str):
 
 
 def run_user_terminal_soup():
+    open_json_zset()
     first_data_user = first_user_search()
 
     if 'сезон' in first_data_user[1]:

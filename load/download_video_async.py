@@ -7,6 +7,7 @@ from concurrent.futures import as_completed
 from tqdm import tqdm
 import os
 import asyncio
+from ..settings.settings import set_executor_download
 
 
 def executor_download_film(url_list: list, video_resolution: int, film_name: str):
@@ -46,7 +47,7 @@ def executor_download_film(url_list: list, video_resolution: int, film_name: str
     chunks = range(0, file_size, chunk_size)
     my_iter = [[url, make_headers(chunk, chunk_size), f'{file_name}.part{i}'] for i, chunk in enumerate(chunks)]
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=int(set_executor_download['max_workers_file'])) as executor:
         jobs = [executor.submit(download_part, i) for i in my_iter]
 
         with tqdm(total=file_size, unit='iB', unit_scale=True, unit_divisor=chunk_size, leave=True,
@@ -91,13 +92,13 @@ def executor_download_serial_soup(url_list: list, video_resolution: int, count_s
         file_size = int(response.headers.get('content-length', 0))
         response_list.append(file_size)
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=int(set_executor_download['max_workers_files'])) as executor:
         jobs = []
 
         for i in range(len(url_list_for_get)):
             jobs.append(executor.submit(download, url=url_list_for_get[i], count=i + 1))
 
-        with tqdm(total=file_size,unit='iB', unit_scale=True, unit_divisor=1024 * 1024, leave=True, colour='green') as bar:
+        with tqdm(total=file_size,unit='iB', unit_scale=True, unit_divisor=1024 * 1024, leave=True, colour='cyan') as bar:
             # colour= 'cyan' #total=file_size
 
             for job in concurrent.futures.as_completed(jobs):

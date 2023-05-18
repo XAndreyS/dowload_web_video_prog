@@ -1,0 +1,4 @@
+{
+    "max_workers_file": 100,
+    "max_workers_files": 20
+}
