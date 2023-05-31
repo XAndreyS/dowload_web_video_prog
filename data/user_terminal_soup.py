@@ -4,9 +4,9 @@ import time
 from collections import defaultdict
 import json
 from .get_link_soup import ZagonkaSoup
-from ..load.download_video import downloads_serial_soup, downloads_film, downloads_film_soup
-from ..load.download_video_async import executor_download_serial_soup,executor_download_film
-from ..settings.settings import set_zagonka, open_json_zset
+from load.download_video import downloads_serial_soup, downloads_film, downloads_film_soup
+from load.download_video_async import executor_download_serial_soup,executor_download_film
+from settings.settings import set_zagonka, open_json_zset
 
 
 def first_user_search():

@@ -32,7 +32,5 @@
         "X-KL-kfa-Ajax-Request": "Ajax_Request",
         "X-Requested-With": "XMLHttpRequest"
     },
-    "count_url": {
-        "count": 27
-    }
+    "count_url": {"count": 27}
 }

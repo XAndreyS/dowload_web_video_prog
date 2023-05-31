@@ -1,13 +1,12 @@
-import requests
+
 import json
 import datetime
-import time
-from dowload_web_video_prog.load.download_video import downloads_serial_soup, downloads_film, downloads_content
-from dowload_web_video_prog.load.download_video_async import executor_download_film, executor_download_serial_soup
-from dowload_web_video_prog.data.get_link_sel import Serial
-from dowload_web_video_prog.data.user_terminal_soup import run_user_terminal_soup
-from dowload_web_video_prog.data.user_terminal_sel import run_user_terminal_selenium
-from dowload_web_video_prog.settings.settings import set_zagonka, set_executor_download
+from load.download_video import downloads_serial_soup, downloads_film, downloads_content
+from load.download_video_async import executor_download_film, executor_download_serial_soup
+from data.get_link_sel import Serial
+from data.user_terminal_soup import run_user_terminal_soup
+from data.user_terminal_sel import run_user_terminal_selenium
+from settings.settings import set_zagonka, set_executor_download
 
 with open('settings/set_parser.json', encoding='utf8') as file:
     par_str = file.read()
@@ -152,7 +151,29 @@ def lsettings_max_workers():
 
 
 def lsettings_url():
-    pass
+    print('Введите новый url сайта в формате: http://zagonka27.zagonko.com/ '
+          '\nВнимание!!! При коппировании url из браузера url можетбыть таким http://zagonka27.zagonko.com/9,'
+          ' вводите без 9')
+    while True:
+        try:
+            user_input_lset_url = str(input('Введите новый url: '))
+
+        except ValueError as error:
+            print(error)
+        else:
+            old_set_zagonka = set_zagonka
+            old_url = set_zagonka['zagonka_urls']['url']
+            print(old_url)
+            for key in set_zagonka:
+                for key_2 in set_zagonka[key]:
+                    print(set_zagonka[key][key_2])
+                    if type(set_zagonka[key][key_2]) is str:
+                        if 'http' in set_zagonka[key][key_2]:
+                            set_zagonka[key][key_2]=old_set_zagonka[key][key_2].replace(f'{old_url}', f'{user_input_lset_url}')
+            print('Изменения настроек на сессию:')
+            print(set_zagonka)
+            start(parser)
+            main()
 
 
 def gsettings():
@@ -248,10 +269,35 @@ def gsettings_max_workers():
 
 
 def gsettings_url():
-    pass
+    print('Введите новый url сайта в формате: http://zagonka27.zagonko.com/ '
+          '\nВнимание!!! При коппировании url из браузера url можетбыть таким http://zagonka27.zagonko.com/9,'
+          ' вводите без 9')
+    while True:
+        try:
+            user_input_lset_url = str(input('Введите новый url: '))
+
+        except ValueError as error:
+            print(error)
+        else:
+            old_set_zagonka = set_zagonka
+            old_url = set_zagonka['zagonka_urls']['url']
+            print(old_url)
+            for key in set_zagonka:
+                for key_2 in set_zagonka[key]:
+                    print(set_zagonka[key][key_2])
+                    if type(set_zagonka[key][key_2]) is str:
+                        if 'http' in set_zagonka[key][key_2]:
+                            set_zagonka[key][key_2] = old_set_zagonka[key][key_2].replace(f'{old_url}',
+                                                                                          f'{user_input_lset_url}')
+            with open('settings/zagonka_set.json', 'w', encoding='utf8') as file:
+                json.dump(set_zagonka, file, ensure_ascii=False, indent=4)
+            print('Изменения настроек в файле json(глобальные настойки):')
+            print(set_zagonka)
+            start(parser)
+            main()
 
 
-def main():
+def run():
 
     print('Помощь /help\nЗакрыть программу /quit')
     while True:
@@ -268,6 +314,11 @@ def main():
                 settings()
             elif user_input_start == '/quit':
                 quit()
+
+
+def main():
+
+    run()
 
 
 if __name__ == '__main__':

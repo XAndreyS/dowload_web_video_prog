@@ -6,3 +6,4 @@ tqdm
 collections
 aiohttp
 asyncio
+mitmproxy

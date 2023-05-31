@@ -7,7 +7,7 @@ from concurrent.futures import as_completed
 from tqdm import tqdm
 import os
 import asyncio
-from ..settings.settings import set_executor_download
+from settings.settings import set_executor_download
 
 
 def executor_download_film(url_list: list, video_resolution: int, film_name: str):

@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import time
 from collections import defaultdict
 import json
-from ..settings.settings import set_zagonka
+from settings.settings import set_zagonka
 
 
 class ZagonkaSoup():
@@ -15,9 +15,10 @@ class ZagonkaSoup():
         url = url
         cookies = {
             '_ga': 'GA1.1.731450299.1682421306',
-            '_ga_X6M5R33EXW': 'GS1.1.1682710055.6.1.1682710377.0.0.0',
-            'PHPSESSID': '4f9da1063ee9b85e8ceeb127f27c4a74',
-            '_ga_P1K99CP13B': 'GS1.1.1682775593.7.1.1682775597.0.0.0',
+            'refse': '1',
+            'PHPSESSID': 'afe2b9f13b6e46401cef6c84b6466658',
+            '_ga_X6M5R33EXW': 'GS1.1.1685488944.14.1.1685488949.0.0.0',
+            '_ga_P1K99CP13B': 'GS1.1.1685488943.19.1.1685489894.0.0.0',
         }
 
         headers = set_zagonka['zagonka_searh_headers']

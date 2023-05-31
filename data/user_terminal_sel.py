@@ -2,10 +2,10 @@ import requests
 import json
 import datetime
 import time
-from ..load.download_video import downloads_serial_sel, downloads_film
+from load.download_video import downloads_serial_sel, downloads_film
 #from ..load.download_video_async import executor_download_serial
 from .get_link_sel import Serial
-from ..settings.settings import set_zagonka
+from settings.settings import set_zagonka
 
 
 def data_print_serial(data_link: dict, data_translater: dict):
