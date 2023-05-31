@@ -6,7 +6,7 @@ from load.download_video_async import executor_download_film, executor_download_
 from data.get_link_sel import Serial
 from data.user_terminal_soup import run_user_terminal_soup
 from data.user_terminal_sel import run_user_terminal_selenium
-from settings.settings import set_zagonka, set_executor_download
+from settings.settings import set_zagonka, set_executor_download, auto_change_url
 
 with open('settings/set_parser.json', encoding='utf8') as file:
     par_str = file.read()
@@ -114,7 +114,7 @@ def lsettings_parser():
         else:
             parser[str(1)] = ls_parser[user_input_lset]
             start(parser)
-            main()
+            run()
 
 
 def lsettings_max_workers():
@@ -173,7 +173,7 @@ def lsettings_url():
             print('Изменения настроек на сессию:')
             print(set_zagonka)
             start(parser)
-            main()
+            run()
 
 
 def gsettings():
@@ -213,14 +213,14 @@ def gsettings_parser():
         else:
             if parser[str(1)] == gs_parser[str(user_input_lset)]:
                 start(parser)
-                main()
+                run()
             else:
                 parser[str(1)], parser[str(2)] = gs_parser[str(2)], gs_parser[str(1)]
 
                 with open('settings/set_parser.json', 'w', encoding='utf8') as file:
                     json.dump(parser, file, ensure_ascii=False, indent=4)
                 start(parser)
-                main()
+                run()
 
 
 def gsettings_max_workers():
@@ -249,7 +249,7 @@ def gsettings_max_workers():
                         print(f'Установленны значения:\n   '
                               f'-кол-во chunks: {set_executor_download["max_workers_file"]}\n    '
                               f'-кол-во синхронных скачиваний серий: {set_executor_download["max_workers_files"]}')
-                        main()
+                        run()
             else:
                 while True:
                     try:
@@ -265,7 +265,7 @@ def gsettings_max_workers():
                         print(f'Установленны значения:\n   '
                               f'-кол-во chunks: {set_executor_download["max_workers_file"]}\n    '
                               f'-кол-во синхронных скачиваний серий: {set_executor_download["max_workers_files"]}')
-                        main()
+                        run()
 
 
 def gsettings_url():
@@ -294,26 +294,38 @@ def gsettings_url():
             print('Изменения настроек в файле json(глобальные настойки):')
             print(set_zagonka)
             start(parser)
-            main()
+            run()
 
 
 def run():
 
-    print('Помощь /help\nЗакрыть программу /quit')
-    while True:
+    try:
+        print('Помощь /help\nЗакрыть программу /quit')
+        while True:
+            try:
+                user_input_start = str(input('Для начала работы введите /start: '))
+            except ValueError as error:
+                print(error)
+            else:
+                if user_input_start == '/start':
+                    start(parser)
+                elif user_input_start == '/help':
+                    help()
+                elif user_input_start == '/settings' or user_input_start == '/ss':
+                    settings()
+                elif user_input_start == '/quit':
+                    quit()
+    except Exception as error:
+        print(f'Возникла ошибка')
         try:
-            user_input_start = str(input('Для начала работы введите /start: '))
-        except ValueError as error:
+            print('Запускаю автомтическую смену url(добавляется +1 к числу в адресе сайта)')
+            auto_change_url(set_zagonka)
+            start(parser)
+        except Exception as error:
             print(error)
-        else:
-            if user_input_start == '/start':
-                start(parser)
-            elif user_input_start == '/help':
-                help()
-            elif user_input_start == '/settings' or user_input_start == '/ss':
-                settings()
-            elif user_input_start == '/quit':
-                quit()
+            print('Не удалось решить ошибку, попробуйте сменить url с помощью команды /settings')
+
+
 
 
 def main():
